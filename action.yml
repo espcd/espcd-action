@@ -1,0 +1,62 @@
+name: 'espcd action'
+description: 'compiles and uploads arduino sketch to espcd-backend'
+inputs:
+  url:
+    description: 'Url of the backend firmwares path'
+    required: true
+    default: 'https://api.espcd.duckdns.org/firmwares'
+  fqbn:
+    description: 'The fully qualified board name of the device, e.g.: esp8266:esp8266:generic'
+    required: true
+  sketch:
+    description: 'Path to the arduino sketch that should be compiled'
+    required: true
+  product:
+    description: 'The id of the product that should be assiciated with the firmware'
+    required: false
+  title:
+    description: 'The title of the firmware'
+    required: false
+    default: ''
+  description:
+    description: 'The description of the firmware'
+    required: false
+    default: ''
+runs:
+  using: "composite"
+  steps:
+    - name: Setup arduino cli
+      uses: arduino/setup-arduino-cli@v1
+    - name: Set arduino cli core args
+      uses: actions/github-script@v4
+      id: core-args
+      with:
+        script: |
+          let result = {options: '', platform: ''};
+          if (inputs.fqbn.startsWith('esp32:esp32')) {
+              result.options = '--additional-urls "https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json"';
+          } else if (inputs.fqbn.startsWith('esp8266:esp8266')) {
+              result.options = '--additional-urls "https://arduino.esp8266.com/stable/package_esp8266com_index.json"';
+          }
+          result.platform = inputs.fqbn.split(':').slice(0, -1).join(':');
+          return result;
+    - name: Install core
+      run: |
+        arduino-cli core update-index ${{ steps.core-args.outputs.options }}
+        arduino-cli core install ${{ steps.core-args.outputs.platform }} ${{ steps.core-args.outputs.options }}
+    - name: Install dependencies
+      run: |
+        mkdir -p ~/Arduino/libraries
+        git clone https://github.com/espcd/espcd-library.git ~/Arduino/libraries/espcd-library
+        arduino-cli lib install AutoConnect
+        arduino-cli lib install ArduinoJson
+    - name: Compile sketch
+      run: arduino-cli compile --fqbn ${{ inputs.fqbn }} --output-dir /tmp ${{ inputs.sketch }}
+    - name: Set sketch filename
+      uses: actions/github-script@v4
+      id: sketch-filename
+      with:
+        result-encoding: string
+        script: return inputs.sketch.replace(/^.*[\\\/]/, '');
+    - name: Upload firmware
+      run: curl --include --request POST ${{ inputs.url }} -F"[firmware]product_id=${{ inputs.product }}" -F "[firmware]title=${{ inputs.title }}" -F "[firmware]description=${{ inputs.description }}" -F "[firmware]version=${{ github.sha }}" -F "[firmware]fqbn=${{ inputs.fqbn }}" -F "[firmware]content=@/tmp/${{ steps.sketch-filename.outputs.result }}.bin"
