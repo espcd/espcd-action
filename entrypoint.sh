@@ -2,11 +2,11 @@
 
 platform=$(echo ${INPUT_FQBN} | sed 's|\(.*\):.*|\1|')
 options=""
-if [[ ${platform} == "esp32:esp32" ]] ;
+if [[ ${platform} == "esp32:esp32" ]]
 then
     options="--additional-urls \"https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json\""
 fi
-if [[ ${platform} == "esp8266:esp8266" ]] ;
+if [[ ${platform} == "esp8266:esp8266" ]]
 then
     options="--additional-urls \"https://arduino.esp8266.com/stable/package_esp8266com_index.json\""
 fi
@@ -38,7 +38,8 @@ curl \
     --show-error \
     --fail \
     --include \
-    --request POST "${INPUT_URL}" \
+    --request POST \
+    "${INPUT_URL}?api_key=${INPUT_API_KEY}" \
     -F "[firmware]product_id=${INPUT_PRODUCT}" \
     -F "[firmware]title=${INPUT_TITLE}" \
     -F "[firmware]description=${INPUT_DESCRIPTION}" \

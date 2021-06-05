@@ -5,6 +5,9 @@ inputs:
     description: 'The url of the backend firmwares path'
     required: true
     default: 'https://api.espcd.duckdns.org/firmwares'
+  api_key:
+    description: 'An api key for access to the backend'
+    required: true
   fqbn:
     description: 'The fully qualified board name of the device, e.g.: esp8266:esp8266:generic'
     required: true
@@ -29,6 +32,7 @@ runs:
       shell: bash
       env:
         INPUT_URL: ${{ inputs.url }}
+        INPUT_API_KEY: ${{ inputs.api_key }}
         INPUT_FQBN: ${{ inputs.fqbn }}
         INPUT_SKETCH: ${{ inputs.sketch }}
         INPUT_PRODUCT: ${{ inputs.product }}
