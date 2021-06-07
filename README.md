@@ -1,6 +1,6 @@
-# espcd github action
+# espcd-action
 
-This action compiles an arduino sketch for the given fqbn and uploads it to the espcd backend.
+This github action compiles an arduino sketch for the given fqbn and uploads it to the espcd backend.
 
 ## Inputs
 
