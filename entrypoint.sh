@@ -39,10 +39,21 @@ curl \
     --fail \
     --include \
     --request POST \
-    "${INPUT_URL}?api_key=${INPUT_API_KEY}" \
-    -F "[firmware]product_id=${INPUT_PRODUCT}" \
+    "${INPUT_URL}/firmwares?api_key=${INPUT_API_KEY}" \
     -F "[firmware]title=${INPUT_TITLE}" \
     -F "[firmware]description=${INPUT_DESCRIPTION}" \
     -F "[firmware]version=${GITHUB_SHA}" \
     -F "[firmware]fqbn=${INPUT_FQBN}" \
     -F "[firmware]content=@${firmware_file}"
+
+if [[ "${INPUT_PRODUCT}" ]]
+then
+    curl \
+        --silent \
+        --show-error \
+        --fail \
+        --include \
+        --request PATCH \
+        "${INPUT_URL}/products/${INPUT_PRODUCT}/firmware/${INPUT_FQBN}?api_key=${INPUT_API_KEY}" \
+        -F "firmware_id=${INPUT_PRODUCT}"
+fi

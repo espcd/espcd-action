@@ -6,7 +6,7 @@ This github action compiles an arduino sketch for the given fqbn and uploads it 
 
 ### `url`
 
-**Required** The url of the backend firmwares path. Default `"https://api.espcd.duckdns.org/firmwares"`.
+**Required** The backend url without path (without tailing slash). Default `"https://api.espcd.duckdns.org"`.
 
 ### `api_key`
 
@@ -22,7 +22,7 @@ This github action compiles an arduino sketch for the given fqbn and uploads it 
 
 ### `product`
 
-The id of the product that should be assiciated with the firmware.
+The id of the product for which the firmware should be set for the given fqbn.
 
 ### `title`
 

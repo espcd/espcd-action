@@ -2,9 +2,9 @@ name: 'espcd action'
 description: 'compiles and uploads arduino sketch to espcd-backend'
 inputs:
   url:
-    description: 'The url of the backend firmwares path'
+    description: 'The backend url without path (without tailing slash)'
     required: true
-    default: 'https://api.espcd.duckdns.org/firmwares'
+    default: 'https://api.espcd.duckdns.org'
   api_key:
     description: 'An api key for access to the backend'
     required: true
@@ -15,7 +15,7 @@ inputs:
     description: 'Path to the arduino sketch that should be compiled'
     required: true
   product:
-    description: 'The id of the product that should be assiciated with the firmware'
+    description: 'The id of the product for which the firmware should be set for the given fqbn'
     required: false
   title:
     description: 'The title of the firmware'
