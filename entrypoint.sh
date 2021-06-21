@@ -33,18 +33,20 @@ arduino-cli compile --fqbn ${INPUT_FQBN} --output-dir /tmp "${INPUT_SKETCH}"
 echo "Upload compiled firmware to espcd-backend"
 filename=$(basename "${INPUT_SKETCH}")
 firmware_file="/tmp/${filename}.bin"
-curl \
-    --silent \
-    --show-error \
-    --fail \
-    --include \
-    --request POST \
-    "${INPUT_URL}/firmwares?api_key=${INPUT_API_KEY}" \
-    -F "[firmware]title=${INPUT_TITLE}" \
-    -F "[firmware]description=${INPUT_DESCRIPTION}" \
-    -F "[firmware]version=${GITHUB_SHA}" \
-    -F "[firmware]fqbn=${INPUT_FQBN}" \
-    -F "[firmware]content=@${firmware_file}"
+response=$(
+    curl \
+        --silent \
+        --show-error \
+        --fail \
+        --request POST \
+        "${INPUT_URL}/firmwares?api_key=${INPUT_API_KEY}" \
+        -F "[firmware]title=${INPUT_TITLE}" \
+        -F "[firmware]description=${INPUT_DESCRIPTION}" \
+        -F "[firmware]version=${GITHUB_SHA}" \
+        -F "[firmware]fqbn=${INPUT_FQBN}" \
+        -F "[firmware]content=@${firmware_file}"
+)
+firmware_id=$(echo ${response} | jq ".id")
 
 if [[ "${INPUT_PRODUCT}" ]]
 then
@@ -52,8 +54,7 @@ then
         --silent \
         --show-error \
         --fail \
-        --include \
         --request PATCH \
         "${INPUT_URL}/products/${INPUT_PRODUCT}/firmware/${INPUT_FQBN}?api_key=${INPUT_API_KEY}" \
-        -F "firmware_id=${INPUT_PRODUCT}"
+        -F "firmware_id=${firmware_id}"
 fi
