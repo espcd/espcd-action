@@ -32,6 +32,10 @@ The title of the firmware. Default `""`.
 
 The description of the firmware. Default `""`.
 
+### `compression`
+
+Specifies if and which compression should be used to compress the firmware. Options: none, gzip. The esp32 board currently does not support compression. Default `"none"`.
+
 ## Example usage
 
 ```

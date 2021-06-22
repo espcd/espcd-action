@@ -25,6 +25,10 @@ inputs:
     description: 'The description of the firmware'
     required: false
     default: ''
+  compression:
+    description: 'Specifies if and which compression should be used to compress the firmware. Options: none, gzip. The esp32 board currently does not support compression.'
+    required: false
+    default: 'none'
 runs:
   using: "composite"
   steps:
@@ -38,3 +42,4 @@ runs:
         INPUT_PRODUCT: ${{ inputs.product }}
         INPUT_TITLE: ${{ inputs.title }}
         INPUT_DESCRIPTION: ${{ inputs.description }}
+        INPUT_COMPRESSION: ${{ inputs.compression }}

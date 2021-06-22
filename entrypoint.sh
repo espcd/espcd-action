@@ -33,6 +33,12 @@ arduino-cli compile --fqbn ${INPUT_FQBN} --output-dir /tmp "${INPUT_SKETCH}"
 echo "Upload compiled firmware to espcd-backend"
 filename=$(basename "${INPUT_SKETCH}")
 firmware_file="/tmp/${filename}.bin"
+
+if [[ "${INPUT_COMPRESSION}" == "gzip" ]]
+then
+    gzip -c "${firmware_file}" > "${firmware_file}".gz
+    firmware_file="${firmware_file}".gz
+fi
 response=$(
     curl \
         --silent \
