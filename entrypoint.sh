@@ -2,6 +2,7 @@
 
 platform=$(echo ${INPUT_FQBN} | sed 's|\(.*\):.*|\1|')
 options=""
+platform_version="${platform}"
 if [[ ${platform} == "esp32:esp32" ]]
 then
     options="--additional-urls \"https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json\""
@@ -9,13 +10,14 @@ fi
 if [[ ${platform} == "esp8266:esp8266" ]]
 then
     options="--additional-urls \"https://arduino.esp8266.com/stable/package_esp8266com_index.json\""
+    platform_version="${platform_version}@2.7.4"
 fi
 
 echo "Update arduino cli core index"
 arduino-cli core update-index ${options}
 
 echo "Install arduino cli core and tool dependencies"
-arduino-cli core install ${platform} ${options}
+arduino-cli core install "${platform_version}" ${options}
 
 echo "Install espcd-library dependency"
 mkdir -p ~/Arduino/libraries
@@ -28,7 +30,7 @@ echo "Install ArduinoJson dependency"
 arduino-cli lib install ArduinoJson
 
 echo "Compile the arduino sketch"
-arduino-cli compile --fqbn ${INPUT_FQBN} --output-dir /tmp "${INPUT_SKETCH}"
+arduino-cli compile --fqbn "${INPUT_FQBN}" --output-dir /tmp "${INPUT_SKETCH}"
 
 echo "Upload compiled firmware to espcd-backend"
 filename=$(basename "${INPUT_SKETCH}")
