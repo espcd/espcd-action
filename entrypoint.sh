@@ -6,6 +6,7 @@ platform_version="${platform}"
 if [[ ${platform} == "esp32:esp32" ]]
 then
     options="--additional-urls \"https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json\""
+    platform_version="${platform_version}@1.0.6"
 fi
 if [[ ${platform} == "esp8266:esp8266" ]]
 then
